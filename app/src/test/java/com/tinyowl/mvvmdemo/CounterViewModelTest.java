@@ -8,6 +8,10 @@ import com.tinyowl.mvvmdemo.CounterViewModel;
 
 import org.mockito.Mockito;
 
+import rx.Observer;
+import rx.Subscriber;
+import rx.subjects.Subject;
+
 import static org.mockito.Mockito.*;
 
 public class CounterViewModelTest extends AndroidTestCase {
@@ -54,11 +58,11 @@ public class CounterViewModelTest extends AndroidTestCase {
     }
 
     public void testCountTextListener() {
-        PropertyChangedListener<CounterViewModel.CounterVMProperty> mockListener = mock(PropertyChangedListener.class);
-        counterViewModel.addPropertyChangedListener(mockListener);
+        Observer<String> mockObserver = mock(Observer.class);
+        counterViewModel.getCountTextObservable().subscribe(mockObserver);
 
         counterViewModel.incrementCommand.run();
 
-        verify(mockListener).onPropertyChanged(CounterViewModel.CounterVMProperty.COUNT_TEXT);
+        verify(mockObserver).onNext("1 \u20b9");
     }
 }

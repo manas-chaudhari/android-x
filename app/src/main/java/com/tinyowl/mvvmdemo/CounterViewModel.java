@@ -4,22 +4,25 @@ import com.tinyowl.mvvm.core.BasePropertyObservable;
 import com.tinyowl.mvvm.core.Command;
 import com.tinyowl.mvvm.core.OnChangedListener;
 
-public class CounterViewModel extends BasePropertyObservable<CounterViewModel.CounterVMProperty> {
+import rx.Observable;
+import rx.subjects.BehaviorSubject;
+import rx.subjects.Subject;
+
+public class CounterViewModel {
     CounterModel model;
 
-    public enum CounterVMProperty {
-        COUNT_TEXT
-    }
-
-    private String countText;
+    private BehaviorSubject<String> countText = BehaviorSubject.create();
 
     public String getCountText() {
+        return countText.getValue();
+    }
+
+    public Observable<String> getCountTextObservable() {
         return countText;
     }
 
     private void setCountText(String countText) {
-        this.countText = countText;
-        notifyPropertyChanged(CounterVMProperty.COUNT_TEXT);
+        this.countText.onNext(countText);
     }
 
     public Command incrementCommand = new Command() {

@@ -46,23 +46,7 @@ public class MainActivityFragment extends Fragment {
     private void bindViewModel() {
         BindUtils.bindClick(incrementButton, viewModel.incrementCommand);
         BindUtils.bindClick(decrementButton, viewModel.decrementCommand);
-        viewModel.addPropertyChangedListener(new PropertyChangedListener<CounterViewModel.CounterVMProperty>() {
-            @Override
-            public void onPropertyChanged(CounterViewModel.CounterVMProperty property) {
-                switch (property) {
-                    case COUNT_TEXT:
-                        updateCountText();
-                        break;
-
-                }
-            }
-        });
-        updateCountText();
+        BindUtils.bindText(countTextView, viewModel.getCountTextObservable());
     }
-
-    private void updateCountText() {
-        countTextView.setText(viewModel.getCountText());
-    }
-
 
 }

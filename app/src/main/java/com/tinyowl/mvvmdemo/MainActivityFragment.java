@@ -20,7 +20,7 @@ import butterknife.InjectView;
  */
 public class MainActivityFragment extends Fragment {
 
-    CounterViewModel viewModel = new CounterViewModel();
+    CounterViewModel viewModel = new CounterViewModel(new CounterModel());
 
     @InjectView(R.id.txt_count)
     TextView countTextView;
@@ -51,12 +51,17 @@ public class MainActivityFragment extends Fragment {
             public void onPropertyChanged(CounterViewModel.CounterVMProperty property) {
                 switch (property) {
                     case COUNT_TEXT:
-                        countTextView.setText(viewModel.getCountText());
+                        updateCountText();
                         break;
 
                 }
             }
         });
+        updateCountText();
+    }
+
+    private void updateCountText() {
+        countTextView.setText(viewModel.getCountText());
     }
 
 

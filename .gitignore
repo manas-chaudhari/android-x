@@ -1,0 +1,14 @@
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+
+## Directory-based project format:
+.idea/
+*.iml
+
+## File-based project format:
+*.ipr
+*.iws
+

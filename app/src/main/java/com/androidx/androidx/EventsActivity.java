@@ -1,9 +1,10 @@
 package com.androidx.androidx;
 
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 public class EventsActivity extends ActionBarActivity {
@@ -30,6 +31,7 @@ public class EventsActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Toast.makeText(this, "Settings Clicked", Toast.LENGTH_LONG).show();
             return true;
         }
 

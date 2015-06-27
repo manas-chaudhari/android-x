@@ -30,3 +30,33 @@ dependencies {
     testCompile "org.mockito:mockito-core:1.+"
     testCompile 'org.assertj:assertj-core:1.+'
 }
+
+apply plugin: 'jacoco'
+
+jacoco {
+//  Latest version "0.7.5.201505241946" doesn't work
+    toolVersion = "0.7.1.201405082137"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+def coverageSourceDirs = [
+        'src/main/java',
+]
+
+task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.enabled = true
+        html.destination "${buildDir}/jacocoHtml"
+    }
+    classDirectories = fileTree(
+            dir: './build/intermediates/classes/debug',
+            excludes: ['**/R*.class']
+    )
+    sourceDirectories = files(coverageSourceDirs)
+    executionData = files("./build/jacoco/testDebug.exec")
+
+    // TODO: Ignore Dagger/Butterknife generated classes
+}
+

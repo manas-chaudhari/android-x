@@ -4,15 +4,38 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidx.androidx.service.EventService;
+import com.androidx.androidx.viewmodel.EventsVM;
 
-public class EventsActivity extends ActionBarActivity {
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+import butterknife.OnClick;
+
+
+public class EventsActivity extends ActionBarActivity implements EventsVM.OnEventsVMUpdatedListener {
+    private EventsVM mViewModel = new EventsVM(new EventService());
+
+    @InjectView(R.id.btn_fetch_events)
+    public Button fetchButton;
+
+    @InjectView(R.id.txt_events_count)
+    public TextView countText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
+        ButterKnife.inject(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        ButterKnife.reset(this);
+        super.onDestroy();
     }
 
     @Override
@@ -36,5 +59,26 @@ public class EventsActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @OnClick(R.id.btn_fetch_events)
+    public void fetchEvents() {
+        mViewModel.getFetchCommand().execute();
+    }
+
+    public EventsVM getViewModel() {
+        return mViewModel;
+    }
+
+    // TODO: Remove this
+    public void setViewModel(EventsVM viewModel) {
+        this.mViewModel = viewModel;
+        this.mViewModel.setListener(this);
+        this.onEventsUpdated();
+    }
+
+    @Override
+    public void onEventsUpdated() {
+        countText.setText(getViewModel().getLoadedEvents().size() + "");
     }
 }

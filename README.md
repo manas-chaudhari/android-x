@@ -1,4 +1,4 @@
-# android-x
+# android-x [![Build Status](https://travis-ci.org/manas-chaudhari/android-x.svg?branch=master)](https://travis-ci.org/manas-chaudhari/android-x)
 An experimental project to develop good practices/patterns
 
 # Objectives

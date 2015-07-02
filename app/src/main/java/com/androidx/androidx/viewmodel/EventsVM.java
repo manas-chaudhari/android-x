@@ -1,5 +1,8 @@
 package com.androidx.androidx.viewmodel;
 
+import android.content.Context;
+
+import com.androidx.androidx.R;
 import com.androidx.androidx.model.Event;
 import com.androidx.androidx.mvvm.Command;
 import com.androidx.androidx.service.EventService;
@@ -11,6 +14,7 @@ public class EventsVM {
     private EventService mEventService;
     private OnEventsVMUpdatedListener mListener;
     private List<Event> mLoadedEvents;
+    private Context mContext;
 
     private Command mFetchCommand = new Command() {
         @Override
@@ -19,8 +23,9 @@ public class EventsVM {
         }
     };
 
-    public EventsVM(EventService eventService) {
+    public EventsVM(EventService eventService, Context context) {
         mEventService = eventService;
+        mContext = context;
     }
 
     public Command getFetchCommand() {
@@ -47,7 +52,7 @@ public class EventsVM {
         }
 
         int n = events.size();
-        return (n == 0 ? "No" : n) + " event" + (n == 1 ? "" : "s");
+        return mContext.getResources().getQuantityString(R.plurals.numberOfEvents, n, n);
     }
 
     public interface OnEventsVMUpdatedListener {

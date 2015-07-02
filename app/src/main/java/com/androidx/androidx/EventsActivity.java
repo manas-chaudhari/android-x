@@ -30,7 +30,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
         ButterKnife.inject(this);
-        setViewModel(new EventsVM(new EventService()));
+        setViewModel(new EventsVM(new EventService(), this));
     }
 
     @Override

@@ -3,4 +3,9 @@
 
     <string name="hello_world">Hello</string>
     <string name="action_settings">Settings</string>
+    <plurals name="numberOfEvents">
+        <item quantity="zero">No events</item>
+        <item quantity="one">%d event</item>
+        <item quantity="other">%d events</item>
+    </plurals>
 </resources>

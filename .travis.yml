@@ -22,3 +22,12 @@ android:
     # if you need to run emulator(s) during your tests
     # - sys-img-armeabi-v7a-android-19
     # - sys-img-x86-android-17
+
+before_install:
+  - sudo pip install codecov
+
+after_success:
+  - ./gradlew jacocoTestReport
+  - cp ./app/build/reports/jacocoTestReport/*.xml jacoco.xml
+  - cp ./app/build/reports/jacocoTestReport/*.xml jacoco2.xml
+  - codecov

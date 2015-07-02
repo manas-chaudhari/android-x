@@ -37,7 +37,7 @@ apply plugin: 'jacoco'
 jacoco {
 //  Latest version "0.7.5.201505241946" doesn't work
     toolVersion = "0.7.1.201405082137"
-    reportsDir = file("$buildDir/customJacocoReportDir")
+    reportsDir = file("$buildDir/reports")
 }
 
 def coverageSourceDirs = [
@@ -46,10 +46,10 @@ def coverageSourceDirs = [
 
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
     reports {
-        xml.enabled false
+        xml.enabled true
         csv.enabled false
         html.enabled = true
-        html.destination "${buildDir}/jacocoHtml"
+        html.destination "${reportsDir}/jacocoHtml"
     }
     classDirectories = fileTree(
             dir: './build/intermediates/classes/debug',

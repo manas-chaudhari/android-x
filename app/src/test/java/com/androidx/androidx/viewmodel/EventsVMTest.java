@@ -65,5 +65,60 @@ public class EventsVMTest {
         verify(listener).onEventsUpdated();
     }
 
+    private void resizeDummyEvents(int numberOfEvents) {
+        dummyEvents.clear();
+        for (int i = 0; i < numberOfEvents; ++i) {
+            dummyEvents.add(new Event());
+        }
+    }
 
+    @Test
+    public void countText_ShouldBe2_WhenLoadedEventsReturns2Events() {
+        resizeDummyEvents(2);
+
+        sut.getFetchCommand().execute();
+
+        assertThat(sut.getCountText()).isEqualTo("2 events");
+    }
+
+    @Test
+    public void countText_ShouldBe3_WhenLoadedEventsReturns3Events() {
+        resizeDummyEvents(3);
+
+        sut.getFetchCommand().execute();
+
+        assertThat(sut.getCountText()).isEqualTo("3 events");
+    }
+
+    @Test
+    public void countText_ShouldBeSingular_WhenLoadedEventsReturns1Event() {
+        resizeDummyEvents(1);
+
+        sut.getFetchCommand().execute();
+
+        assertThat(sut.getCountText()).isEqualTo("1 event");
+    }
+
+    @Test
+    public void countText_ShouldBeNoEvents_WhenLoadedEventsReturns0Events() {
+        resizeDummyEvents(0);
+
+        sut.getFetchCommand().execute();
+
+        assertThat(sut.getCountText()).isEqualTo("No events");
+    }
+
+    @Test
+    public void countText_ShouldBeEmpty_BeforeLoading() {
+        assertThat(sut.getCountText()).isEmpty();
+    }
+
+    @Test
+    public void countText_ShouldBeEmpty_WhenLoadedEventsReturnsNull() {
+        when(mockEventService.loadEvents()).thenReturn(null);
+
+        sut.getFetchCommand().execute();
+
+        assertThat(sut.getCountText()).isEmpty();
+    }
 }

@@ -40,6 +40,16 @@ public class EventsVM {
         mListener = listener;
     }
 
+    public String getCountText() {
+        List<Event> events = getLoadedEvents();
+        if (events == null) {
+            return "";
+        }
+
+        int n = events.size();
+        return (n == 0 ? "No" : n) + " event" + (n == 1 ? "" : "s");
+    }
+
     public interface OnEventsVMUpdatedListener {
         void onEventsUpdated();
     }

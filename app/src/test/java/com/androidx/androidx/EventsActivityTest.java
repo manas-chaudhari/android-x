@@ -2,7 +2,6 @@ package com.androidx.androidx;
 
 import android.widget.TextView;
 
-import com.androidx.androidx.model.Event;
 import com.androidx.androidx.mvvm.Command;
 import com.androidx.androidx.viewmodel.EventsVM;
 
@@ -15,9 +14,6 @@ import org.robolectric.RobolectricGradleTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowToast;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -92,23 +88,23 @@ public class EventsActivityTest {
     }
 
     @Test
-    public void loading2Events_ShouldUpdateEventsCountTo2() {
-        configureMockVMForDummyEvents(2);
+    public void loadingEvents_ShouldUpdateCountText() {
         EventsVM.OnEventsVMUpdatedListener listener = setMockVMAndCaptureListener();
+        when(mockVM.getCountText()).thenReturn("50 events");
 
         listener.onEventsUpdated();
 
-        assertThat(sut.countText.getText()).isEqualTo("2");
+        assertThat(sut.countText.getText()).isEqualTo("50 events");
     }
 
     @Test
     public void loading3Events_ShouldUpdateEventsCountTo3() {
-        configureMockVMForDummyEvents(3);
         EventsVM.OnEventsVMUpdatedListener listener = setMockVMAndCaptureListener();
+        when(mockVM.getCountText()).thenReturn("3 events");
 
         listener.onEventsUpdated();
 
-        assertThat(sut.countText.getText()).isEqualTo("3");
+        assertThat(sut.countText.getText()).isEqualTo("3 events");
     }
 
     private EventsVM.OnEventsVMUpdatedListener setMockVMAndCaptureListener() {
@@ -119,21 +115,17 @@ public class EventsActivityTest {
         return listenerArgumentCaptor.getValue();
     }
 
-    private void configureMockVMForDummyEvents(int numberOfEvents) {
-        List<Event> dummyEvents = new ArrayList<>();
-        for (int i = 0; i < numberOfEvents; ++i) {
-            dummyEvents.add(new Event());
-        }
-        when(mockVM.getLoadedEvents()).thenReturn(dummyEvents);
-    }
-
     @Test
     public void settingVM_ShouldUpdateCount() {
-        configureMockVMForDummyEvents(4);
+        when(mockVM.getCountText()).thenReturn("4 events");
 
         sut.setViewModel(mockVM);
 
-        // TODO: Move presentation logic to ViewModel
-        assertThat(sut.countText.getText()).isEqualTo("4");
+        assertThat(sut.countText.getText()).isEqualTo("4 events");
+    }
+
+    @Test
+    public void initialCountText_ShouldBeEmpty() {
+        assertThat(sut.countText.getText()).isEmpty();
     }
 }

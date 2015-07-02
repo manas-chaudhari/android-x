@@ -17,7 +17,7 @@ import butterknife.OnClick;
 
 
 public class EventsActivity extends ActionBarActivity implements EventsVM.OnEventsVMUpdatedListener {
-    private EventsVM mViewModel = new EventsVM(new EventService());
+    private EventsVM mViewModel;
 
     @InjectView(R.id.btn_fetch_events)
     public Button fetchButton;
@@ -30,6 +30,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
         ButterKnife.inject(this);
+        setViewModel(new EventsVM(new EventService()));
     }
 
     @Override
@@ -70,7 +71,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         return mViewModel;
     }
 
-    // TODO: Remove this
+    // TODO: Make this private
     public void setViewModel(EventsVM viewModel) {
         this.mViewModel = viewModel;
         this.mViewModel.setListener(this);
@@ -79,6 +80,6 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
 
     @Override
     public void onEventsUpdated() {
-        countText.setText(getViewModel().getLoadedEvents().size() + "");
+        countText.setText(getViewModel().getCountText());
     }
 }

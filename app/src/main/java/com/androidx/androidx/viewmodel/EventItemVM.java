@@ -6,4 +6,12 @@ public class EventItemVM {
     public EventItemVM(Event event) {
 
     }
+
+    public String getUserName() {
+        return null;
+    }
+
+    public String getRepositoryName() {
+        return null;
+    }
 }

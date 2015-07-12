@@ -1,8 +1,11 @@
 package com.androidx.androidx;
 
+import android.widget.ListView;
 import android.widget.TextView;
 
+import com.androidx.androidx.model.Event;
 import com.androidx.androidx.mvvm.Command;
+import com.androidx.androidx.viewmodel.EventItemVM;
 import com.androidx.androidx.viewmodel.EventsVM;
 
 import org.junit.Before;
@@ -15,10 +18,14 @@ import org.robolectric.annotation.Config;
 import org.robolectric.fakes.RoboMenuItem;
 import org.robolectric.shadows.ShadowToast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.any;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -76,15 +83,31 @@ public class EventsActivityTest {
     }
 
     @Test
+    public void settingViewModel_ShouldInvokeSetListener() {
+        sut.setViewModel(mockVM);
+
+        verify(mockVM).setListener(any(EventsVM.OnEventsVMUpdatedListener.class));
+    }
+
+    //region Helpers
+    private EventsVM.OnEventsVMUpdatedListener setMockVMAndCaptureListener() {
+        sut.setViewModel(mockVM);
+
+        ArgumentCaptor<EventsVM.OnEventsVMUpdatedListener> listenerArgumentCaptor = ArgumentCaptor.forClass(EventsVM.OnEventsVMUpdatedListener.class);
+        verify(mockVM).setListener(listenerArgumentCaptor.capture());
+        return listenerArgumentCaptor.getValue();
+    }
+    //endregion
+
+    //region Count Text
+    @Test
     public void countText_ShouldExist() {
         assertThat(sut.countText).isNotNull();
     }
 
     @Test
-    public void settingViewModel_ShouldInvokeSetListener() {
-        sut.setViewModel(mockVM);
-
-        verify(mockVM).setListener(any(EventsVM.OnEventsVMUpdatedListener.class));
+    public void initialCountText_ShouldBeEmpty() {
+        assertThat(sut.countText.getText()).isEmpty();
     }
 
     @Test
@@ -107,14 +130,6 @@ public class EventsActivityTest {
         assertThat(sut.countText.getText()).isEqualTo("3 events");
     }
 
-    private EventsVM.OnEventsVMUpdatedListener setMockVMAndCaptureListener() {
-        sut.setViewModel(mockVM);
-
-        ArgumentCaptor<EventsVM.OnEventsVMUpdatedListener> listenerArgumentCaptor = ArgumentCaptor.forClass(EventsVM.OnEventsVMUpdatedListener.class);
-        verify(mockVM).setListener(listenerArgumentCaptor.capture());
-        return listenerArgumentCaptor.getValue();
-    }
-
     @Test
     public void settingVM_ShouldUpdateCount() {
         when(mockVM.getCountText()).thenReturn("4 events");
@@ -124,8 +139,62 @@ public class EventsActivityTest {
         assertThat(sut.countText.getText()).isEqualTo("4 events");
     }
 
-    @Test
-    public void initialCountText_ShouldBeEmpty() {
-        assertThat(sut.countText.getText()).isEmpty();
+    //endregion
+
+    //region Events List
+    private List<EventItemVM> getDummyEventItems(int number) {
+        List<EventItemVM> dummyEventItems = new ArrayList<>();
+        for (int i = 0; i < number; i++) {
+            dummyEventItems.add(new EventItemVM(new Event()));
+        }
+        return dummyEventItems;
     }
+
+    @Test
+    public void eventsListView_ShouldExist() throws Exception {
+        assertThat(sut.eventsListView).isNotNull();
+    }
+
+    @Test
+    public void eventsListViewAdapter_ShouldExist() {
+        assertThat(sut.eventsListView.getAdapter()).isNotNull();
+    }
+
+    @Test
+    public void initiallyEventsListViewAdapter_ShouldBeEmpty() {
+        assertThat(sut.eventsListView.getAdapter().getCount()).isZero();
+    }
+
+    @Test
+    public void loading2Events_ShouldShow2Items() {
+        EventsVM.OnEventsVMUpdatedListener listener = setMockVMAndCaptureListener();
+        when(mockVM.getEventItems()).thenReturn(getDummyEventItems(2));
+
+        listener.onEventsUpdated();
+
+        assertThat(sut.eventsListView.getAdapter().getCount()).isEqualTo(2);
+    }
+
+    @Test
+    public void loading3Events_ShouldShow3Items() {
+        EventsVM.OnEventsVMUpdatedListener listener = setMockVMAndCaptureListener();
+        when(mockVM.getEventItems()).thenReturn(getDummyEventItems(3));
+
+        listener.onEventsUpdated();
+
+        assertThat(sut.eventsListView.getAdapter().getCount()).isEqualTo(3);
+    }
+    //endregion
+
+    //region Extras
+    @Test
+    public void adapter_ShouldBeSetOnlyOnce() {
+        sut.eventsListView = mock(ListView.class);
+
+        sut.onEventsUpdated();
+
+        verifyZeroInteractions(sut.eventsListView);
+    }
+    //endregion
+
 }

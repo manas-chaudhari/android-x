@@ -7,6 +7,7 @@ import com.androidx.androidx.model.Event;
 import com.androidx.androidx.mvvm.Command;
 import com.androidx.androidx.service.EventService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EventsVM {
@@ -32,8 +33,15 @@ public class EventsVM {
         return mFetchCommand;
     }
 
-    public List<Event> getLoadedEvents() {
-        return mLoadedEvents;
+    public List<EventItemVM> getEventItems() {
+        if (mLoadedEvents == null) {
+            return new ArrayList<>();
+        }
+        List<EventItemVM> eventItems = new ArrayList<>();
+        for (Event event : mLoadedEvents) {
+            eventItems.add(new EventItemVM(event));
+        }
+        return eventItems;
     }
 
     private void setLoadedEvents(List<Event> loadedEvents) {
@@ -46,7 +54,7 @@ public class EventsVM {
     }
 
     public String getCountText() {
-        List<Event> events = getLoadedEvents();
+        List<Event> events = mLoadedEvents;
         if (events == null) {
             return "";
         }

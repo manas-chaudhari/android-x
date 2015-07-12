@@ -4,38 +4,50 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidx.androidx.service.EventService;
+import com.androidx.androidx.viewmodel.EventItemVM;
 import com.androidx.androidx.viewmodel.EventsVM;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 
 
 public class EventsActivity extends ActionBarActivity implements EventsVM.OnEventsVMUpdatedListener {
     private EventsVM mViewModel;
 
-    @InjectView(R.id.btn_fetch_events)
+    @Bind(R.id.btn_fetch_events)
     public Button fetchButton;
 
-    @InjectView(R.id.txt_events_count)
+    @Bind(R.id.txt_events_count)
     public TextView countText;
+
+    @Bind(R.id.list_events)
+    public ListView eventsListView;
+
+    private ArrayAdapter<EventItemVM> mEventsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_events);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
+
+        mEventsAdapter = new ArrayAdapter<EventItemVM>(this, R.layout.abc_simple_dropdown_hint);
+        eventsListView.setAdapter(mEventsAdapter);
+        
         setViewModel(new EventsVM(new EventService(), this));
     }
 
     @Override
     protected void onDestroy() {
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
         super.onDestroy();
     }
 
@@ -81,5 +93,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
     @Override
     public void onEventsUpdated() {
         countText.setText(getViewModel().getCountText());
+        mEventsAdapter.clear();
+        mEventsAdapter.addAll(getViewModel().getEventItems());
     }
 }

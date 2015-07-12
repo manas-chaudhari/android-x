@@ -52,8 +52,11 @@ public class EventsVMTest {
     public void fetchCommand_ShouldSaveLoadedData() {
         sut.getFetchCommand().execute();
 
-        assertThat(sut.getLoadedEvents()).isNotNull();
-        assertThat(sut.getLoadedEvents()).isEqualTo(dummyEvents);
+        List<EventItemVM> eventItems = sut.getEventItems();
+        assertThat(eventItems).isNotNull();
+        for (int i = 0; i < dummyEvents.size(); i++) {
+            assertThat(eventItems.get(i)).isEqualToComparingFieldByField(new EventItemVM(dummyEvents.get(i)));
+        }
     }
 
     @Test
@@ -71,6 +74,12 @@ public class EventsVMTest {
         for (int i = 0; i < numberOfEvents; ++i) {
             dummyEvents.add(new Event());
         }
+    }
+
+    @Test
+    public void initiallyLoadedEvents_ShouldBeEmpty() {
+        assertThat(sut.getEventItems()).isNotNull();
+        assertThat(sut.getEventItems()).isEmpty();
     }
 
     @Test

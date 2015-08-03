@@ -7,14 +7,14 @@ import com.androidx.androidx.model.Event;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Single;
+import rx.Observable;
 
 public class EventService {
 
-    public @NonNull Single<List<Event>> loadEvents() {
+    public @NonNull Observable<List<Event>> loadEvents() {
 
         List<Event> events = new ArrayList<>();
         events.add(new Event());
-        return Single.just(events);
+        return Observable.just(events);
     }
 }

@@ -3,6 +3,7 @@ package com.androidx.androidx.viewmodel;
 import com.androidx.androidx.BuildConfig;
 import com.androidx.androidx.model.Event;
 import com.androidx.androidx.service.EventService;
+import com.androidx.androidx.utils.TestOnSubscribe;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
-import rx.Subscriber;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -46,20 +46,12 @@ public class EventsVMTest {
 
     @Test
     public void fetchCommand_ShouldCallEventsApi() {
-        // TODO: cleanup
-        final boolean[] subscribed = {false};
-        Observable<List<Event>> mockEventsO = Observable.create(new rx.Observable.OnSubscribe<List<Event>>() {
-            @Override
-            public void call(Subscriber<? super List<Event>> subscriber) {
-                subscribed[0] = true;
-            }
-        });
-        when(mockEventService.loadEvents()).thenReturn(mockEventsO);
+        TestOnSubscribe<List<Event>> onSubscribe = new TestOnSubscribe<>();
+        when(mockEventService.loadEvents()).thenReturn(Observable.create(onSubscribe));
 
         sut.getFetchCommand().execute();
 
-//        verify(mockEventsO).subscribe(any(Action1.class));
-        assertThat(subscribed[0]).isTrue();
+        onSubscribe.assertSubscribed();
     }
 
     @Test

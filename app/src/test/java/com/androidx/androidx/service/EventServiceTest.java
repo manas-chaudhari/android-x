@@ -10,6 +10,8 @@ import org.robolectric.annotation.Config;
 
 import java.util.List;
 
+import rx.observers.TestSubscriber;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(RobolectricGradleTestRunner.class)
@@ -20,8 +22,11 @@ public class EventServiceTest {
     public void loadData_ShouldReturnNonEmptyData() {
         EventService eventService = new EventService();
 
-        List<Event> events = eventService.loadEvents();
+        TestSubscriber<List<Event>> subscriber = new TestSubscriber<>();
+        eventService.loadEvents().subscribe(subscriber);
 
+        subscriber.assertValueCount(1);
+        List<Event> events = subscriber.getOnNextEvents().get(0);
         assertThat(events).isNotNull();
         assertThat(events.size()).isPositive();
     }

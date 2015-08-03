@@ -10,6 +10,8 @@ import com.androidx.androidx.service.EventService;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.functions.Action1;
+
 public class EventsVM {
 
     private EventService mEventService;
@@ -20,7 +22,12 @@ public class EventsVM {
     private Command mFetchCommand = new Command() {
         @Override
         public void execute() {
-            setLoadedEvents(mEventService.loadEvents());
+            mEventService.loadEvents().subscribe(new Action1<List<Event>>() {
+                @Override
+                public void call(List<Event> events) {
+                    setLoadedEvents(events);
+                }
+            });
         }
     };
 

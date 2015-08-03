@@ -14,6 +14,9 @@ import org.robolectric.annotation.Config;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Single;
+import rx.SingleSubscriber;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -31,7 +34,7 @@ public class EventsVMTest {
         mockEventService = mock(EventService.class);
         dummyEvents = new ArrayList<Event>();
         dummyEvents.add(new Event());
-        when(mockEventService.loadEvents()).thenReturn(dummyEvents);
+        when(mockEventService.loadEvents()).thenReturn(Single.just(dummyEvents));
 
         sut = new EventsVM(mockEventService, RuntimeEnvironment.application);
     }
@@ -43,9 +46,20 @@ public class EventsVMTest {
 
     @Test
     public void fetchCommand_ShouldCallEventsApi() {
+        // TODO: cleanup
+        final boolean[] subscribed = {false};
+        Single<List<Event>> mockEventsO = Single.create(new Single.OnSubscribe<List<Event>>() {
+            @Override
+            public void call(SingleSubscriber<? super List<Event>> singleSubscriber) {
+                subscribed[0] = true;
+            }
+        });
+        when(mockEventService.loadEvents()).thenReturn(mockEventsO);
+
         sut.getFetchCommand().execute();
 
-        verify(mockEventService).loadEvents();
+//        verify(mockEventsO).subscribe(any(Action1.class));
+        assertThat(subscribed[0]).isTrue();
     }
 
     @Test
@@ -125,7 +139,7 @@ public class EventsVMTest {
 
     @Test
     public void countText_ShouldBeEmpty_WhenLoadedEventsReturnsNull() {
-        when(mockEventService.loadEvents()).thenReturn(null);
+        when(mockEventService.loadEvents()).thenReturn(Single.<List<Event>>just(null));
 
         sut.getFetchCommand().execute();
 

@@ -6,6 +6,7 @@ import com.androidx.androidx.model.Event;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 
@@ -15,6 +16,6 @@ public class EventService {
 
         List<Event> events = new ArrayList<>();
         events.add(new Event());
-        return Observable.just(events);
+        return Observable.just(events).delay(2, TimeUnit.SECONDS);
     }
 }

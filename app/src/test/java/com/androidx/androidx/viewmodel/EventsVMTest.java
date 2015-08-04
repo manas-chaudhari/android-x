@@ -45,13 +45,14 @@ public class EventsVMTest {
     }
 
     @Test
-    public void fetchCommand_ShouldCallEventsApi() {
+    public void fetchCommand_ShouldCallEventsApiAsynchronously() {
         TestOnSubscribe<List<Event>> onSubscribe = new TestOnSubscribe<>();
         when(mockEventService.loadEvents()).thenReturn(Observable.create(onSubscribe));
 
         sut.getFetchCommand().execute();
 
         onSubscribe.assertSubscribed();
+        assertThat(onSubscribe.getThread()).isNotEqualTo(Thread.currentThread());
     }
 
     @Test

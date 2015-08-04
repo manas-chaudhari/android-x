@@ -45,14 +45,14 @@ public class EventsVMTest {
     }
 
     @Test
-    public void fetchCommand_ShouldCallEventsApiAsynchronously() {
+    public void fetchCommand_ShouldCallEventsApiAsynchronously() throws InterruptedException {
         TestOnSubscribe<List<Event>> onSubscribe = new TestOnSubscribe<>();
         when(mockEventService.loadEvents()).thenReturn(Observable.create(onSubscribe));
 
         sut.getFetchCommand().execute();
 
         onSubscribe.assertSubscribed();
-        assertThat(onSubscribe.getThread()).isNotEqualTo(Thread.currentThread());
+        onSubscribe.assertBackgroundThread();
     }
 
     @Test

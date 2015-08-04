@@ -11,6 +11,7 @@ import org.robolectric.annotation.Config;
 import java.util.List;
 
 import rx.observers.TestSubscriber;
+import rx.schedulers.Schedulers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,11 +21,12 @@ public class EventServiceTest {
 
     @Test
     public void loadData_ShouldReturnNonEmptyData() {
-        EventService eventService = new EventService();
+        EventService eventService = new EventService(Schedulers.immediate());
 
         TestSubscriber<List<Event>> subscriber = new TestSubscriber<>();
         eventService.loadEvents().subscribe(subscriber);
 
+        subscriber.awaitTerminalEvent();
         subscriber.assertValueCount(1);
         List<Event> events = subscriber.getOnNextEvents().get(0);
         assertThat(events).isNotNull();

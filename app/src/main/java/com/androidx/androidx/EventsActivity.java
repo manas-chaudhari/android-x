@@ -17,6 +17,7 @@ import com.androidx.androidx.viewmodel.EventsVM;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.schedulers.Schedulers;
 
 
 public class EventsActivity extends ActionBarActivity implements EventsVM.OnEventsVMUpdatedListener {
@@ -42,7 +43,8 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         mEventsAdapter = new ArrayAdapter<EventItemVM>(this, R.layout.abc_simple_dropdown_hint);
         eventsListView.setAdapter(mEventsAdapter);
 
-        setViewModel(new EventsVM(new EventService(), this));
+        // TODO: Check design. Activity is deciding the scheduler
+        setViewModel(new EventsVM(new EventService(Schedulers.io()), this));
     }
 
     @Override

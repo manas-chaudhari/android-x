@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 public class EventsVM {
 
@@ -22,7 +23,7 @@ public class EventsVM {
     private Command mFetchCommand = new Command() {
         @Override
         public void execute() {
-            mEventService.loadEvents().subscribe(new Action1<List<Event>>() {
+            mEventService.loadEvents(Schedulers.io()).subscribe(new Action1<List<Event>>() {
                 @Override
                 public void call(List<Event> events) {
                     setLoadedEvents(events);

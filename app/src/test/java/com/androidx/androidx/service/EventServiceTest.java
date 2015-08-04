@@ -21,10 +21,10 @@ public class EventServiceTest {
 
     @Test
     public void loadData_ShouldReturnNonEmptyData() {
-        EventService eventService = new EventService(Schedulers.immediate());
+        EventService eventService = new EventService();
 
         TestSubscriber<List<Event>> subscriber = new TestSubscriber<>();
-        eventService.loadEvents().subscribe(subscriber);
+        eventService.loadEvents(Schedulers.immediate()).subscribe(subscriber);
 
         subscriber.awaitTerminalEvent();
         subscriber.assertValueCount(1);

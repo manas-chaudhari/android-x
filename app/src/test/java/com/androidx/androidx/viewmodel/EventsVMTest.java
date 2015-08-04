@@ -16,8 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Scheduler;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -34,7 +36,7 @@ public class EventsVMTest {
         mockEventService = mock(EventService.class);
         dummyEvents = new ArrayList<Event>();
         dummyEvents.add(new Event());
-        when(mockEventService.loadEvents()).thenReturn(Observable.just(dummyEvents));
+        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.just(dummyEvents));
 
         sut = new EventsVM(mockEventService, RuntimeEnvironment.application);
     }
@@ -47,7 +49,7 @@ public class EventsVMTest {
     @Test
     public void fetchCommand_ShouldCallEventsApi() throws InterruptedException {
         TestOnSubscribe<List<Event>> onSubscribe = new TestOnSubscribe<>();
-        when(mockEventService.loadEvents()).thenReturn(Observable.create(onSubscribe));
+        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.create(onSubscribe));
 
         sut.getFetchCommand().execute();
 
@@ -131,7 +133,7 @@ public class EventsVMTest {
 
     @Test
     public void countText_ShouldBeEmpty_WhenLoadedEventsReturnsNull() {
-        when(mockEventService.loadEvents()).thenReturn(Observable.<List<Event>>just(null));
+        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.<List<Event>>just(null));
 
         sut.getFetchCommand().execute();
 

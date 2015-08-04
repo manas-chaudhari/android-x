@@ -12,15 +12,10 @@ import rx.Observable;
 import rx.Scheduler;
 
 public class EventService {
-    Scheduler mScheduler;
 
-    public EventService(Scheduler scheduler) {
-        mScheduler = scheduler;
-    }
-
-    public @NonNull Observable<List<Event>> loadEvents() {
+    public @NonNull Observable<List<Event>> loadEvents(Scheduler scheduler) {
         List<Event> events = new ArrayList<>();
         events.add(new Event());
-        return Observable.just(events).delay(2, TimeUnit.SECONDS).subscribeOn(mScheduler);
+        return Observable.just(events).delay(2, TimeUnit.SECONDS).subscribeOn(scheduler);
     }
 }

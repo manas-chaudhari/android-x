@@ -44,7 +44,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         eventsListView.setAdapter(mEventsAdapter);
 
         // TODO: Check design. Activity is deciding the scheduler
-        setViewModel(new EventsVM(new EventService(Schedulers.io()), this));
+        setViewModel(new EventsVM(new EventService(), this));
     }
 
     @Override

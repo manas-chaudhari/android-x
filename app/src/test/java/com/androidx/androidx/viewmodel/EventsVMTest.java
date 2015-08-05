@@ -17,6 +17,8 @@ import java.util.List;
 
 import rx.Observable;
 import rx.Scheduler;
+import rx.observers.TestSubscriber;
+import rx.subjects.BehaviorSubject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -172,6 +174,29 @@ public class EventsVMTest {
         sut.getFetchCommand().execute();
 
         assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.FAILED);
+    }
+
+    @Test
+    public void whenLoadStateChangesUpdateListenerShouldGetInvoked() {
+        // TODO: Remove/Cleanup test
+        EventsVM.OnEventsVMUpdatedListener listener = mock(EventsVM.OnEventsVMUpdatedListener.class);
+        sut.setListener(listener);
+        BehaviorSubject<List<Event>> eventsBehaviour = BehaviorSubject.create();
+        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(eventsBehaviour);
+        TestSubscriber<OperationState> testSubscriber = new TestSubscriber();
+        sut.getLoadOperationStateObservable().subscribe(testSubscriber);
+
+        sut.getFetchCommand().execute();
+
+        testSubscriber.assertValueCount(2);
+
+        eventsBehaviour.onNext(dummyEvents);
+
+        testSubscriber.assertValueCount(3);
+
+        eventsBehaviour.onError(new Exception());
+
+        testSubscriber.assertValueCount(4);
     }
 
     //endregion

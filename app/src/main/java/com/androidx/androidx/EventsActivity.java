@@ -17,7 +17,6 @@ import com.androidx.androidx.viewmodel.EventsVM;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.schedulers.Schedulers;
 
 
 public class EventsActivity extends ActionBarActivity implements EventsVM.OnEventsVMUpdatedListener {

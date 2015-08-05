@@ -10,8 +10,10 @@ import com.androidx.androidx.service.EventService;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+import rx.subjects.BehaviorSubject;
 
 public class EventsVM {
 
@@ -21,7 +23,7 @@ public class EventsVM {
     private OnEventsVMUpdatedListener mListener;
 
     private List<Event> mLoadedEvents;
-    private OperationState mLoadOperationState = OperationState.DEFAULT;
+    private BehaviorSubject<OperationState> mLoadOperationState = BehaviorSubject.create(OperationState.DEFAULT);
 
     private Command mFetchCommand = new Command() {
         @Override
@@ -83,11 +85,15 @@ public class EventsVM {
     }
 
     public OperationState getLoadOperationState() {
+        return mLoadOperationState.getValue();
+    }
+
+    public Observable<OperationState> getLoadOperationStateObservable() {
         return mLoadOperationState;
     }
 
     private void setLoadOperationState(OperationState loadOperationState) {
-        this.mLoadOperationState = loadOperationState;
+        this.mLoadOperationState.onNext(loadOperationState);
     }
 
 

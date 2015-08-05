@@ -90,6 +90,7 @@ public class EventsVMTest {
         assertThat(sut.getEventItems()).isEmpty();
     }
 
+    //region CountText
     @Test
     public void countText_ShouldBe2_WhenLoadedEventsReturns2Events() {
         resizeDummyEvents(2);
@@ -139,4 +140,39 @@ public class EventsVMTest {
 
         assertThat(sut.getCountText()).isEmpty();
     }
+    //endregion
+
+    //region Progress, Retry
+
+    @Test
+    public void initiallyFetchEventOperationStateShouldBeDefault() {
+        assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.DEFAULT);
+    }
+
+    @Test
+    public void fetchCommandShouldChangeStateToRunning() {
+        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.<List<Event>>never());
+
+        sut.getFetchCommand().execute();
+
+        assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.RUNNING);
+    }
+
+    @Test
+    public void afterLoadingStateShouldChangeToSuccessful() {
+        sut.getFetchCommand().execute();
+
+        assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.SUCCESSFUL);
+    }
+
+    @Test
+    public void onErrorStateShouldChangeToFailed() {
+        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.<List<Event>>error(new Exception()));
+
+        sut.getFetchCommand().execute();
+
+        assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.FAILED);
+    }
+
+    //endregion
 }

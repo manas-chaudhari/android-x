@@ -16,21 +16,32 @@ import rx.schedulers.Schedulers;
 public class EventsVM {
 
     private EventService mEventService;
-    private OnEventsVMUpdatedListener mListener;
-    private List<Event> mLoadedEvents;
     private Context mContext;
+
+    private OnEventsVMUpdatedListener mListener;
+
+    private List<Event> mLoadedEvents;
+    private OperationState mLoadOperationState = OperationState.DEFAULT;
 
     private Command mFetchCommand = new Command() {
         @Override
         public void execute() {
+            setLoadOperationState(OperationState.RUNNING);
             mEventService.loadEvents(Schedulers.io()).subscribe(new Action1<List<Event>>() {
                 @Override
                 public void call(List<Event> events) {
                     setLoadedEvents(events);
+                    setLoadOperationState(OperationState.SUCCESSFUL);
+                }
+            }, new Action1<Throwable>() {
+                @Override
+                public void call(Throwable throwable) {
+                    setLoadOperationState(OperationState.FAILED);
                 }
             });
         }
     };
+
 
     public EventsVM(EventService eventService, Context context) {
         mEventService = eventService;
@@ -70,6 +81,15 @@ public class EventsVM {
         int n = events.size();
         return mContext.getResources().getQuantityString(R.plurals.numberOfEvents, n, n);
     }
+
+    public OperationState getLoadOperationState() {
+        return mLoadOperationState;
+    }
+
+    private void setLoadOperationState(OperationState loadOperationState) {
+        this.mLoadOperationState = loadOperationState;
+    }
+
 
     public interface OnEventsVMUpdatedListener {
         void onEventsUpdated();

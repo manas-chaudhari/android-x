@@ -18,8 +18,8 @@ import java.util.List;
 import rx.Observable;
 import rx.Scheduler;
 import rx.observers.TestSubscriber;
-import rx.subjects.BehaviorSubject;
 
+import static com.androidx.androidx.utils.RxTestUtils.testSubscriber;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
@@ -38,9 +38,13 @@ public class EventsVMTest {
         mockEventService = mock(EventService.class);
         dummyEvents = new ArrayList<Event>();
         dummyEvents.add(new Event());
-        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.just(dummyEvents));
+        mockLoadEvents(Observable.just(dummyEvents));
 
         sut = new EventsVM(mockEventService, RuntimeEnvironment.application);
+    }
+
+    private void mockLoadEvents(Observable<List<Event>> eventsObservable) {
+        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(eventsObservable);
     }
 
     @Test
@@ -51,7 +55,7 @@ public class EventsVMTest {
     @Test
     public void fetchCommand_ShouldCallEventsApi() throws InterruptedException {
         TestOnSubscribe<List<Event>> onSubscribe = new TestOnSubscribe<>();
-        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.create(onSubscribe));
+        mockLoadEvents(Observable.create(onSubscribe));
 
         sut.getFetchCommand().execute();
 
@@ -136,7 +140,7 @@ public class EventsVMTest {
 
     @Test
     public void countText_ShouldBeEmpty_WhenLoadedEventsReturnsNull() {
-        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.<List<Event>>just(null));
+        mockLoadEvents(Observable.<List<Event>>just(null));
 
         sut.getFetchCommand().execute();
 
@@ -148,55 +152,39 @@ public class EventsVMTest {
 
     @Test
     public void initiallyFetchEventOperationStateShouldBeDefault() {
-        assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.DEFAULT);
+        TestSubscriber<OperationState> testSubscriber = new TestSubscriber<>();
+        sut.getLoadOperationStateObservable().subscribe(testSubscriber);
+
+        testSubscriber.assertValues(OperationState.DEFAULT);
     }
 
     @Test
     public void fetchCommandShouldChangeStateToRunning() {
-        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.<List<Event>>never());
+        mockLoadEvents(Observable.<List<Event>>never());
+        TestSubscriber<OperationState> testSubscriber = testSubscriber(sut.getLoadOperationStateObservable());
 
         sut.getFetchCommand().execute();
 
-        assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.RUNNING);
+        testSubscriber.assertValues(OperationState.DEFAULT, OperationState.RUNNING);
     }
 
     @Test
     public void afterLoadingStateShouldChangeToSuccessful() {
+        TestSubscriber<OperationState> testSubscriber = testSubscriber(sut.getLoadOperationStateObservable());
+
         sut.getFetchCommand().execute();
 
-        assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.SUCCESSFUL);
+        testSubscriber.assertValues(OperationState.DEFAULT, OperationState.RUNNING, OperationState.SUCCESSFUL);
     }
 
     @Test
     public void onErrorStateShouldChangeToFailed() {
-        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(Observable.<List<Event>>error(new Exception()));
+        mockLoadEvents(Observable.<List<Event>>error(new Exception()));
+        TestSubscriber<OperationState> testSubscriber = testSubscriber(sut.getLoadOperationStateObservable());
 
         sut.getFetchCommand().execute();
 
-        assertThat(sut.getLoadOperationState()).isEqualTo(OperationState.FAILED);
-    }
-
-    @Test
-    public void whenLoadStateChangesUpdateListenerShouldGetInvoked() {
-        // TODO: Remove/Cleanup test
-        EventsVM.OnEventsVMUpdatedListener listener = mock(EventsVM.OnEventsVMUpdatedListener.class);
-        sut.setListener(listener);
-        BehaviorSubject<List<Event>> eventsBehaviour = BehaviorSubject.create();
-        when(mockEventService.loadEvents(any(Scheduler.class))).thenReturn(eventsBehaviour);
-        TestSubscriber<OperationState> testSubscriber = new TestSubscriber();
-        sut.getLoadOperationStateObservable().subscribe(testSubscriber);
-
-        sut.getFetchCommand().execute();
-
-        testSubscriber.assertValueCount(2);
-
-        eventsBehaviour.onNext(dummyEvents);
-
-        testSubscriber.assertValueCount(3);
-
-        eventsBehaviour.onError(new Exception());
-
-        testSubscriber.assertValueCount(4);
+        testSubscriber.assertValues(OperationState.DEFAULT, OperationState.RUNNING, OperationState.FAILED);
     }
 
     //endregion

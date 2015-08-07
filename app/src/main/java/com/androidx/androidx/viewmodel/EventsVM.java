@@ -84,10 +84,6 @@ public class EventsVM {
         return mContext.getResources().getQuantityString(R.plurals.numberOfEvents, n, n);
     }
 
-    public OperationState getLoadOperationState() {
-        return mLoadOperationState.getValue();
-    }
-
     public Observable<OperationState> getLoadOperationStateObservable() {
         return mLoadOperationState;
     }

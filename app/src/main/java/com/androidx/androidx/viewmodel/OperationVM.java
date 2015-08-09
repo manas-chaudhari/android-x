@@ -18,4 +18,8 @@ public class OperationVM {
             }
         });
     }
+
+    public Observable<OperationState> getOperationStateObservable() {
+        return mStateObservable;
+    }
 }

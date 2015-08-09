@@ -43,6 +43,8 @@ public class EventsVM {
             });
         }
     };
+    
+    private OperationVM mLoadOperationVM = new OperationVM(mLoadOperationState);
 
 
     public EventsVM(EventService eventService, Context context) {
@@ -90,6 +92,10 @@ public class EventsVM {
 
     private void setLoadOperationState(OperationState loadOperationState) {
         this.mLoadOperationState.onNext(loadOperationState);
+    }
+
+    public OperationVM getLoadOperationVM() {
+        return mLoadOperationVM;
     }
 
 

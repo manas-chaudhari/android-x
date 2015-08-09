@@ -188,4 +188,17 @@ public class EventsVMTest {
     }
 
     //endregion
+
+    //region SubViewModel OperationVM
+
+    @Test
+    public void childOperationViewModel_ShouldExist() {
+        assertThat(sut.getLoadOperationVM()).isNotNull();
+    }
+
+    @Test
+    public void childOperationVM_ShouldGetCorrectOperationState() {
+        assertThat(sut.getLoadOperationVM().getOperationStateObservable()).isEqualTo(sut.getLoadOperationStateObservable());
+    }
+    //endregion
 }

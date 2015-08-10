@@ -43,7 +43,7 @@ public class EventsVM {
             });
         }
     };
-    
+
     private OperationVM mLoadOperationVM = new OperationVM(mLoadOperationState);
 
 

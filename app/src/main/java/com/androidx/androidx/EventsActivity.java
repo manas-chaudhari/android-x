@@ -7,12 +7,15 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidx.androidx.mvvm.Binder;
 import com.androidx.androidx.service.EventService;
 import com.androidx.androidx.viewmodel.EventItemVM;
 import com.androidx.androidx.viewmodel.EventsVM;
+import com.androidx.androidx.viewmodel.OperationState;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,6 +33,9 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
 
     @Bind(R.id.list_events)
     public ListView eventsListView;
+
+    @Bind(R.id.pb_events)
+    public ProgressBar progressBar;
 
     private ArrayAdapter<EventItemVM> mEventsAdapter;
 
@@ -89,6 +95,8 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         this.mViewModel = viewModel;
         this.mViewModel.setListener(this);
         this.onEventsUpdated();
+
+        Binder.bindVisibility(progressBar, mViewModel.getLoadOperationVM().getViewVisibilityObservable(OperationState.RUNNING));
     }
 
     @Override

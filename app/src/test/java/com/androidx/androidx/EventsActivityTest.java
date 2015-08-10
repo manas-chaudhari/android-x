@@ -1,5 +1,6 @@
 package com.androidx.androidx;
 
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -7,6 +8,8 @@ import com.androidx.androidx.model.Event;
 import com.androidx.androidx.mvvm.Command;
 import com.androidx.androidx.viewmodel.EventItemVM;
 import com.androidx.androidx.viewmodel.EventsVM;
+import com.androidx.androidx.viewmodel.OperationState;
+import com.androidx.androidx.viewmodel.OperationVM;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +23,8 @@ import org.robolectric.shadows.ShadowToast;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.subjects.BehaviorSubject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -184,6 +189,33 @@ public class EventsActivityTest {
 
         assertThat(sut.eventsListView.getAdapter().getCount()).isEqualTo(3);
     }
+    //endregion
+
+    //region Progress and Retry
+
+    @Test
+    public void progressBar_ShouldExist() {
+        assertThat(sut.progressBar).isNotNull();
+    }
+
+    @Test
+    public void runningState_ShouldShowProgressBar() {
+        OperationVM mockOperationVM = mock(OperationVM.class);
+        when(mockVM.getLoadOperationVM()).thenReturn(mockOperationVM);
+        BehaviorSubject<Boolean> visibilityBehaviour = BehaviorSubject.create(true);
+        when(mockOperationVM.getViewVisibilityObservable(OperationState.RUNNING)).thenReturn(visibilityBehaviour);
+        setMockVMAndCaptureListener();
+
+        visibilityBehaviour.onNext(true);
+        assertThat(sut.progressBar.getVisibility()).isEqualTo(View.VISIBLE);
+
+        visibilityBehaviour.onNext(false);
+        assertThat(sut.progressBar.getVisibility()).isNotEqualTo(View.VISIBLE);
+
+        visibilityBehaviour.onNext(true);
+        assertThat(sut.progressBar.getVisibility()).isEqualTo(View.VISIBLE);
+    }
+
     //endregion
 
     //region Extras

@@ -15,6 +15,7 @@ import com.androidx.androidx.mvvm.Binder;
 import com.androidx.androidx.service.EventService;
 import com.androidx.androidx.viewmodel.EventItemVM;
 import com.androidx.androidx.viewmodel.EventsVM;
+import com.androidx.androidx.viewmodel.OperationVM;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -95,8 +96,13 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         this.mViewModel.setListener(this);
         this.onEventsUpdated();
 
-        Binder.bindVisibility(progressBar, mViewModel.getLoadOperationVM().getRunningViewVisibility());
-        Binder.bindVisibility(eventsListView, mViewModel.getLoadOperationVM().getSuccessfulViewVisibility());
+        bindOperationVM(mViewModel.getLoadOperationVM());
+    }
+
+    private void bindOperationVM(OperationVM operationVM) {
+        Binder.bindVisibility(progressBar, operationVM.getRunningViewVisibility());
+        Binder.bindVisibility(eventsListView, operationVM.getSuccessfulViewVisibility());
+        Binder.bindVisibility(fetchButton, operationVM.getFailedViewVisibility());
     }
 
     @Override

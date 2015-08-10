@@ -220,6 +220,15 @@ public class EventsActivityTest {
 
         BindingTest.assertVisibilityBinding(sut.eventsListView, visibilityBehaviour);
     }
+
+    @Test
+    public void fetchButton_ShouldBindToFailedVisibility() {
+        BehaviorSubject<Boolean> visibilityBehaviour = BehaviorSubject.create(true);
+        when(mockOperationVM.getFailedViewVisibility()).thenReturn(visibilityBehaviour);
+        setMockVMAndCaptureListener();
+
+        BindingTest.assertVisibilityBinding(sut.fetchButton, visibilityBehaviour);
+    }
     //endregion
 
     //region Extras

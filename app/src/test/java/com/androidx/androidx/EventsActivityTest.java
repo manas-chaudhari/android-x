@@ -24,6 +24,7 @@ import org.robolectric.shadows.ShadowToast;
 import java.util.ArrayList;
 import java.util.List;
 
+import rx.Observable;
 import rx.subjects.BehaviorSubject;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +44,7 @@ public class EventsActivityTest {
     public void setup() {
         sut = Robolectric.setupActivity(EventsActivity.class);
         mockVM = mock(EventsVM.class);
+        when(mockVM.getLoadOperationVM()).thenReturn(new OperationVM(Observable.just(OperationState.RUNNING)));
     }
 
     @Test

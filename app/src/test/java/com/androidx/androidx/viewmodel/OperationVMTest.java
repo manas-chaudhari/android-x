@@ -17,6 +17,10 @@ import rx.Observable;
 @Config(constants = BuildConfig.class, manifest = Config.NONE)
 public class OperationVMTest {
 
+    private final OperationVM sut;
+
+    // Directly using source enums as parameters doesn't work.
+    // Only enums declared in test code can be used
     @ParameterizedRobolectricTestRunner.Parameters(name = "State = {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
@@ -31,15 +35,21 @@ public class OperationVMTest {
 
     public OperationVMTest(String stateString) {
         mStateToTest = OperationState.valueOf(stateString);
+        sut = new OperationVM(Observable.just(mStateToTest));
     }
 
     @Test
-    public void runningState_ShouldShowOnlyRunningView() {
-        OperationVM sut = new OperationVM(Observable.just(mStateToTest));
+    public void runningView_ShouldBeVisibleInOnlyRunningState() {
+        RxTestUtils.testSubscriber(sut.getRunningViewVisibility()).assertValue(mStateToTest == OperationState.RUNNING);
+    }
 
-        for (OperationState state :
-                OperationState.values()) {
-            RxTestUtils.testSubscriber(sut.getViewVisibilityObservable(state)).assertValue(state == mStateToTest);
-        }
+    @Test
+    public void successfulView_ShouldBeVisibleInOnlySuccessfulState() {
+        RxTestUtils.testSubscriber(sut.getSuccessfulViewVisibility()).assertValue(mStateToTest == OperationState.SUCCESSFUL);
+    }
+
+    @Test
+    public void failedView_ShouldBeVisibleInOnlyFailedState() {
+        RxTestUtils.testSubscriber(sut.getFailedViewVisibility()).assertValue(mStateToTest == OperationState.FAILED);
     }
 }

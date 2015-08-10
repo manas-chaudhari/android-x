@@ -10,7 +10,23 @@ public class OperationVM {
         mStateObservable = stateObservable;
     }
 
-    public Observable<Boolean> getViewVisibilityObservable(final OperationState viewState) {
+    public Observable<OperationState> getOperationStateObservable() {
+        return mStateObservable;
+    }
+
+    public Observable<Boolean> getRunningViewVisibility() {
+        return getViewVisibilityObservable(OperationState.RUNNING);
+    }
+
+    public Observable<Boolean> getSuccessfulViewVisibility() {
+        return getViewVisibilityObservable(OperationState.SUCCESSFUL);
+    }
+
+    public Observable<Boolean> getFailedViewVisibility() {
+        return getViewVisibilityObservable(OperationState.FAILED);
+    }
+
+    private Observable<Boolean> getViewVisibilityObservable(final OperationState viewState) {
         return mStateObservable.map(new Func1<OperationState, Boolean>() {
             @Override
             public Boolean call(OperationState operationState) {
@@ -19,7 +35,4 @@ public class OperationVM {
         });
     }
 
-    public Observable<OperationState> getOperationStateObservable() {
-        return mStateObservable;
-    }
 }

@@ -1,11 +1,11 @@
 package com.androidx.androidx;
 
-import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.androidx.androidx.model.Event;
 import com.androidx.androidx.mvvm.Command;
+import com.androidx.androidx.utils.BindingTest;
 import com.androidx.androidx.viewmodel.EventItemVM;
 import com.androidx.androidx.viewmodel.EventsVM;
 import com.androidx.androidx.viewmodel.OperationState;
@@ -30,6 +30,7 @@ import rx.subjects.BehaviorSubject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -39,12 +40,14 @@ import static org.mockito.Mockito.when;
 public class EventsActivityTest {
     EventsActivity sut;
     EventsVM mockVM;
+    private OperationVM mockOperationVM;
 
     @Before
     public void setup() {
         sut = Robolectric.setupActivity(EventsActivity.class);
         mockVM = mock(EventsVM.class);
-        when(mockVM.getLoadOperationVM()).thenReturn(new OperationVM(Observable.just(OperationState.RUNNING)));
+        mockOperationVM = spy(new OperationVM(Observable.<OperationState>empty()));
+        when(mockVM.getLoadOperationVM()).thenReturn(mockOperationVM);
     }
 
     @Test
@@ -201,23 +204,22 @@ public class EventsActivityTest {
     }
 
     @Test
-    public void runningState_ShouldShowProgressBar() {
-        OperationVM mockOperationVM = mock(OperationVM.class);
-        when(mockVM.getLoadOperationVM()).thenReturn(mockOperationVM);
+    public void progressBar_ShouldBindToRunningVisibility() {
         BehaviorSubject<Boolean> visibilityBehaviour = BehaviorSubject.create(true);
-        when(mockOperationVM.getViewVisibilityObservable(OperationState.RUNNING)).thenReturn(visibilityBehaviour);
+        when(mockOperationVM.getRunningViewVisibility()).thenReturn(visibilityBehaviour);
         setMockVMAndCaptureListener();
 
-        visibilityBehaviour.onNext(true);
-        assertThat(sut.progressBar.getVisibility()).isEqualTo(View.VISIBLE);
-
-        visibilityBehaviour.onNext(false);
-        assertThat(sut.progressBar.getVisibility()).isNotEqualTo(View.VISIBLE);
-
-        visibilityBehaviour.onNext(true);
-        assertThat(sut.progressBar.getVisibility()).isEqualTo(View.VISIBLE);
+        BindingTest.assertVisibilityBinding(sut.progressBar, visibilityBehaviour);
     }
 
+    @Test
+    public void listView_ShouldBindToSuccessfulVisibility() {
+        BehaviorSubject<Boolean> visibilityBehaviour = BehaviorSubject.create(true);
+        when(mockOperationVM.getSuccessfulViewVisibility()).thenReturn(visibilityBehaviour);
+        setMockVMAndCaptureListener();
+
+        BindingTest.assertVisibilityBinding(sut.eventsListView, visibilityBehaviour);
+    }
     //endregion
 
     //region Extras

@@ -1,7 +1,6 @@
 package com.androidx.androidx.viewmodel;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.androidx.androidx.R;
 import com.androidx.androidx.model.Event;
@@ -13,7 +12,6 @@ import java.util.List;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import rx.subjects.BehaviorSubject;
 
@@ -31,18 +29,11 @@ public class EventsVM {
         @Override
         public void execute() {
             setLoadOperationState(OperationState.RUNNING);
-            mEventService.loadEvents(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Action1<List<Event>>() {
-                @Override
-                public void call(List<Event> events) {
-                    setLoadedEvents(events);
-                    setLoadOperationState(OperationState.SUCCESSFUL);
-                }
-            }, new Action1<Throwable>() {
-                @Override
-                public void call(Throwable throwable) {
-                    setLoadOperationState(OperationState.FAILED);
-                }
-            });
+            mEventService.loadEvents(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
+                    events -> {
+                setLoadedEvents(events);
+                setLoadOperationState(OperationState.SUCCESSFUL);
+            }, throwable -> setLoadOperationState(OperationState.FAILED));
         }
     };
 

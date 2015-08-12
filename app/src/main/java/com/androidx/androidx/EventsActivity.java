@@ -45,7 +45,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         setContentView(R.layout.activity_events);
         ButterKnife.bind(this);
 
-        mEventsAdapter = new ArrayAdapter<EventItemVM>(this, R.layout.abc_simple_dropdown_hint);
+        mEventsAdapter = new ArrayAdapter<>(this, R.layout.abc_simple_dropdown_hint);
         eventsListView.setAdapter(mEventsAdapter);
 
         // TODO: Check design. Activity is deciding the scheduler

@@ -2,8 +2,6 @@ package com.androidx.androidx.viewmodel;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.functions.Func2;
 
 public class OperationVM {
     Observable<OperationState> mStateObservable;
@@ -29,22 +27,12 @@ public class OperationVM {
     public Observable<Boolean> getFailedViewVisibility() {
         return Observable.combineLatest(getViewVisibilityObservable(OperationState.FAILED),
                 getViewVisibilityObservable(OperationState.DEFAULT),
-                new Func2<Boolean, Boolean, Boolean>() {
-                    @Override
-                    public Boolean call(Boolean isFailed, Boolean isDefault) {
-                        return isFailed | isDefault;
-                    }
-                });
+                (isFailed, isDefault) -> isFailed | isDefault);
     }
 
     private Observable<Boolean> getViewVisibilityObservable(final OperationState viewState) {
         return mStateObservable.observeOn(AndroidSchedulers.mainThread())
-                .map(new Func1<OperationState, Boolean>() {
-            @Override
-            public Boolean call(OperationState operationState) {
-                return operationState == viewState;
-            }
-        });
+                .map(operationState -> operationState == viewState);
     }
 
 }

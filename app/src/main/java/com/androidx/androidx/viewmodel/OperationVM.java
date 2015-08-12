@@ -1,6 +1,7 @@
 package com.androidx.androidx.viewmodel;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -8,7 +9,7 @@ public class OperationVM {
     Observable<OperationState> mStateObservable;
 
     public OperationVM(Observable<OperationState> stateObservable) {
-        mStateObservable = stateObservable;
+        mStateObservable = stateObservable.asObservable().observeOn(AndroidSchedulers.mainThread());
     }
 
     public Observable<OperationState> getOperationStateObservable() {

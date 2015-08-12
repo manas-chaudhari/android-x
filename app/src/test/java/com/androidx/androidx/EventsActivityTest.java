@@ -1,5 +1,6 @@
 package com.androidx.androidx;
 
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -228,6 +229,11 @@ public class EventsActivityTest {
         setMockVMAndCaptureListener();
 
         BindingTest.assertVisibilityBinding(sut.fetchButton, visibilityBehaviour);
+    }
+
+    @Test
+    public void fetchButton_ShouldBeVisibleInitially() {
+        assertThat(sut.fetchButton.getVisibility()).isEqualTo(View.VISIBLE);
     }
     //endregion
 

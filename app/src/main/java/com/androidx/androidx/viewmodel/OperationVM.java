@@ -2,6 +2,7 @@ package com.androidx.androidx.viewmodel;
 
 import rx.Observable;
 import rx.functions.Func1;
+import rx.functions.Func2;
 
 public class OperationVM {
     Observable<OperationState> mStateObservable;
@@ -22,8 +23,17 @@ public class OperationVM {
         return getViewVisibilityObservable(OperationState.SUCCESSFUL);
     }
 
+    // This behaviour may not be generalisable to all operationVMs.
+    // Might require refactoring if a different behaviour is required
     public Observable<Boolean> getFailedViewVisibility() {
-        return getViewVisibilityObservable(OperationState.FAILED);
+        return Observable.combineLatest(getViewVisibilityObservable(OperationState.FAILED),
+                getViewVisibilityObservable(OperationState.DEFAULT),
+                new Func2<Boolean, Boolean, Boolean>() {
+                    @Override
+                    public Boolean call(Boolean isFailed, Boolean isDefault) {
+                        return isFailed | isDefault;
+                    }
+                });
     }
 
     private Observable<Boolean> getViewVisibilityObservable(final OperationState viewState) {

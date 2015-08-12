@@ -40,16 +40,20 @@ public class OperationVMTest {
 
     @Test
     public void runningView_ShouldBeVisibleInOnlyRunningState() {
-        RxTestUtils.testSubscriber(sut.getRunningViewVisibility()).assertValue(mStateToTest == OperationState.RUNNING);
+        RxTestUtils.testSubscriber(sut.getRunningViewVisibility()).
+                assertValue(mStateToTest == OperationState.RUNNING);
     }
 
     @Test
     public void successfulView_ShouldBeVisibleInOnlySuccessfulState() {
-        RxTestUtils.testSubscriber(sut.getSuccessfulViewVisibility()).assertValue(mStateToTest == OperationState.SUCCESSFUL);
+        RxTestUtils.testSubscriber(sut.getSuccessfulViewVisibility()).
+                assertValue(mStateToTest == OperationState.SUCCESSFUL);
     }
 
     @Test
-    public void failedView_ShouldBeVisibleInOnlyFailedState() {
-        RxTestUtils.testSubscriber(sut.getFailedViewVisibility()).assertValue(mStateToTest == OperationState.FAILED);
+    public void failedView_ShouldBeVisibleInFailedOrDefaultState() {
+        RxTestUtils.testSubscriber(sut.getFailedViewVisibility()).
+                assertValue(mStateToTest == OperationState.FAILED ||
+                        mStateToTest == OperationState.DEFAULT);
     }
 }

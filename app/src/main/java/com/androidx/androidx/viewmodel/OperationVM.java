@@ -1,6 +1,7 @@
 package com.androidx.androidx.viewmodel;
 
 import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.functions.Func2;
 
@@ -37,7 +38,8 @@ public class OperationVM {
     }
 
     private Observable<Boolean> getViewVisibilityObservable(final OperationState viewState) {
-        return mStateObservable.map(new Func1<OperationState, Boolean>() {
+        return mStateObservable.observeOn(AndroidSchedulers.mainThread())
+                .map(new Func1<OperationState, Boolean>() {
             @Override
             public Boolean call(OperationState operationState) {
                 return operationState == viewState;

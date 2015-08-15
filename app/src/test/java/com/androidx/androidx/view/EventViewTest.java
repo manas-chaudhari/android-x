@@ -39,7 +39,7 @@ public class EventViewTest {
     @Test
     public void bindWithUser1_ShouldDisplayUser1() {
         EventItemVM vm = mock(EventItemVM.class);
-        when(vm.getUserName()).thenReturn("user1");
+        when(vm.getUserLogin()).thenReturn("user1");
 
         sut.bindViewModel(vm);
 
@@ -50,7 +50,7 @@ public class EventViewTest {
     @Test
     public void bindWithUser2_ShouldDisplayUser2() {
         EventItemVM vm = mock(EventItemVM.class);
-        when(vm.getUserName()).thenReturn("user2");
+        when(vm.getUserLogin()).thenReturn("user2");
 
         sut.bindViewModel(vm);
 

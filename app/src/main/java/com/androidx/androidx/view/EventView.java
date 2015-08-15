@@ -28,7 +28,7 @@ public class EventView extends View implements Bindable<EventItemVM> {
 
     @Override
     public void bindViewModel(EventItemVM vm) {
-        mUserNameTextView.setText(vm.getUserName());
+        mUserNameTextView.setText(vm.getUserLogin());
         mRepositoryNameTextView.setText(vm.getRepositoryName());
     }
 }

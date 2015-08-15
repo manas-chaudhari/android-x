@@ -3,15 +3,17 @@ package com.androidx.androidx.viewmodel;
 import com.androidx.androidx.model.Event;
 
 public class EventItemVM {
-    public EventItemVM(Event event) {
+    Event mEvent;
 
+    public EventItemVM(Event event) {
+        mEvent = event;
     }
 
-    public String getUserName() {
-        return null;
+    public String getUserLogin() {
+        return mEvent.getUserLogin();
     }
 
     public String getRepositoryName() {
-        return null;
+        return mEvent.getRepositoryName();
     }
 }

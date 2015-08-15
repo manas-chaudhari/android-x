@@ -43,4 +43,9 @@ public class VMAdapter<VM, V extends View & Bindable<VM>> extends BaseAdapter {
 
         return view;
     }
+
+    // TODO: Make this method call notifyDataSetChanged. Not sure how this can be tested
+    public void setViewModels(List<VM> viewModels) {
+        mViewModels = viewModels;
+    }
 }

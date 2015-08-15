@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -12,10 +11,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidx.androidx.mvvm.Binder;
+import com.androidx.androidx.mvvm.VMAdapter;
 import com.androidx.androidx.service.EventService;
+import com.androidx.androidx.view.EventView;
 import com.androidx.androidx.viewmodel.EventItemVM;
 import com.androidx.androidx.viewmodel.EventsVM;
 import com.androidx.androidx.viewmodel.OperationVM;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -37,7 +40,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
     @Bind(R.id.pb_events)
     public ProgressBar progressBar;
 
-    private ArrayAdapter<EventItemVM> mEventsAdapter;
+    private VMAdapter<EventItemVM, EventView> mEventsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         setContentView(R.layout.activity_events);
         ButterKnife.bind(this);
 
-        mEventsAdapter = new ArrayAdapter<>(this, R.layout.abc_simple_dropdown_hint);
+        mEventsAdapter = new VMAdapter<>(this, new ArrayList<>(), () -> new EventView(EventsActivity.this));
         eventsListView.setAdapter(mEventsAdapter);
 
         setViewModel(new EventsVM(new EventService(), this));
@@ -107,7 +110,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
     @Override
     public void onEventsUpdated() {
         countText.setText(getViewModel().getCountText());
-        mEventsAdapter.clear();
-        mEventsAdapter.addAll(getViewModel().getEventItems());
+        mEventsAdapter.setViewModels(getViewModel().getEventItems());
+        mEventsAdapter.notifyDataSetChanged();
     }
 }

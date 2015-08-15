@@ -31,9 +31,13 @@ public class EventsVM {
             setLoadOperationState(OperationState.RUNNING);
             mEventService.loadEvents(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                     events -> {
-                setLoadedEvents(events);
-                setLoadOperationState(OperationState.SUCCESSFUL);
-            }, throwable -> setLoadOperationState(OperationState.FAILED));
+                        setLoadedEvents(events);
+                        setLoadOperationState(OperationState.SUCCESSFUL);
+                    },
+                    throwable -> {
+                        throwable.printStackTrace();
+                        setLoadOperationState(OperationState.FAILED);
+                    });
         }
     };
 

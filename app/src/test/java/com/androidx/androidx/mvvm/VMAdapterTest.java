@@ -149,6 +149,16 @@ public class VMAdapterTest {
         verify(convertView).bindViewModel(itemVms.get(2));
     }
 
+    @Test
+    public void settingNewViewModels_ShouldChangeCount() {
+        setupSut(2);
+
+        List<TestViewModel> newVMs = getTestViewModels(5);
+        sut.setViewModels(newVMs);
+
+        assertThat(sut.getCount()).isEqualTo(5);
+    }
+
     private List<TestViewModel> getTestViewModels(int size) {
         List<TestViewModel> itemVms = new ArrayList<TestViewModel>();
         for (int i = 0; i < size; i++) {

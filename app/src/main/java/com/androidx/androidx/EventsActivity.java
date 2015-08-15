@@ -48,7 +48,6 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         mEventsAdapter = new ArrayAdapter<>(this, R.layout.abc_simple_dropdown_hint);
         eventsListView.setAdapter(mEventsAdapter);
 
-        // TODO: Check design. Activity is deciding the scheduler
         setViewModel(new EventsVM(new EventService(), this));
     }
 

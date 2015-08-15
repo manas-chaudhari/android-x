@@ -32,4 +32,21 @@ public class EventServiceTest {
         assertThat(events).isNotNull();
         assertThat(events.size()).isPositive();
     }
+
+    @Test
+    public void parsedEvents_ShouldContainUserNameAndRepo() {
+        EventService eventService = new EventService();
+
+        TestSubscriber<List<Event>> subscriber = new TestSubscriber<>();
+        eventService.loadEvents(Schedulers.immediate()).subscribe(subscriber);
+
+        subscriber.awaitTerminalEvent();
+        List<Event> events = subscriber.getOnNextEvents().get(0);
+
+        for (Event e :
+                events) {
+            assertThat(e.getUserLogin()).isNotEmpty();
+            assertThat(e.getRepositoryName()).isNotEmpty();
+        }
+    }
 }

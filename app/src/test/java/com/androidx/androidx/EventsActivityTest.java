@@ -4,7 +4,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.androidx.androidx.model.Event;
 import com.androidx.androidx.mvvm.Command;
 import com.androidx.androidx.utils.BindingTest;
 import com.androidx.androidx.viewmodel.EventItemVM;
@@ -42,6 +41,7 @@ public class EventsActivityTest {
     EventsActivity sut;
     EventsVM mockVM;
     private OperationVM mockOperationVM;
+    private EventItemVM mockEventItemVM;
 
     @Before
     public void setup() {
@@ -49,6 +49,9 @@ public class EventsActivityTest {
         mockVM = mock(EventsVM.class);
         mockOperationVM = spy(new OperationVM(Observable.<OperationState>empty()));
         when(mockVM.getLoadOperationVM()).thenReturn(mockOperationVM);
+        mockEventItemVM = mock(EventItemVM.class);
+        when(mockEventItemVM.getRepositoryName()).thenReturn("test_repo");
+        when(mockEventItemVM.getUserLogin()).thenReturn("test_name");
     }
 
     @Test
@@ -156,7 +159,7 @@ public class EventsActivityTest {
     private List<EventItemVM> getDummyEventItems(int number) {
         List<EventItemVM> dummyEventItems = new ArrayList<>();
         for (int i = 0; i < number; i++) {
-            dummyEventItems.add(new EventItemVM(new Event()));
+            dummyEventItems.add(mockEventItemVM);
         }
         return dummyEventItems;
     }

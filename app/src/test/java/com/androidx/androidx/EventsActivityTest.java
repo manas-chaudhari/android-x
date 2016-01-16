@@ -1,7 +1,7 @@
 package com.androidx.androidx;
 
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.androidx.androidx.mvvm.Command;
@@ -176,7 +176,7 @@ public class EventsActivityTest {
 
     @Test
     public void initiallyEventsListViewAdapter_ShouldBeEmpty() {
-        assertThat(sut.eventsListView.getAdapter().getCount()).isZero();
+        assertThat(sut.eventsListView.getAdapter().getItemCount()).isZero();
     }
 
     @Test
@@ -186,7 +186,7 @@ public class EventsActivityTest {
 
         listener.onEventsUpdated();
 
-        assertThat(sut.eventsListView.getAdapter().getCount()).isEqualTo(2);
+        assertThat(sut.eventsListView.getAdapter().getItemCount()).isEqualTo(2);
     }
 
     @Test
@@ -196,7 +196,7 @@ public class EventsActivityTest {
 
         listener.onEventsUpdated();
 
-        assertThat(sut.eventsListView.getAdapter().getCount()).isEqualTo(3);
+        assertThat(sut.eventsListView.getAdapter().getItemCount()).isEqualTo(3);
     }
     //endregion
 
@@ -243,7 +243,7 @@ public class EventsActivityTest {
     //region Extras
     @Test
     public void adapter_ShouldBeSetOnlyOnce() {
-        sut.eventsListView = mock(ListView.class);
+        sut.eventsListView = mock(RecyclerView.class);
 
         sut.onEventsUpdated();
 

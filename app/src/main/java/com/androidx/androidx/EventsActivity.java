@@ -2,16 +2,17 @@ package com.androidx.androidx;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidx.androidx.mvvm.Binder;
-import com.androidx.androidx.mvvm.VMAdapter;
+import com.androidx.androidx.mvvm.VMRecyclerAdapter;
 import com.androidx.androidx.service.EventService;
 import com.androidx.androidx.view.EventView;
 import com.androidx.androidx.viewmodel.EventItemVM;
@@ -19,10 +20,12 @@ import com.androidx.androidx.viewmodel.EventsVM;
 import com.androidx.androidx.viewmodel.OperationVM;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.subjects.BehaviorSubject;
 
 
 public class EventsActivity extends ActionBarActivity implements EventsVM.OnEventsVMUpdatedListener {
@@ -35,12 +38,13 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
     public TextView countText;
 
     @Bind(R.id.list_events)
-    public ListView eventsListView;
+    public RecyclerView eventsListView;
 
     @Bind(R.id.pb_events)
     public ProgressBar progressBar;
 
-    private VMAdapter<EventItemVM, EventView> mEventsAdapter;
+    private VMRecyclerAdapter<EventView, EventItemVM> mEventsAdapter;
+    private BehaviorSubject<List<EventItemVM>> eventItemVMs = BehaviorSubject.create(new ArrayList<>());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,8 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         setContentView(R.layout.activity_events);
         ButterKnife.bind(this);
 
-        mEventsAdapter = new VMAdapter<>(this, new ArrayList<>(), () -> new EventView(EventsActivity.this));
+        eventsListView.setLayoutManager(new LinearLayoutManager(this));
+        mEventsAdapter = new VMRecyclerAdapter<>(eventItemVMs, () -> new EventView(this));
         eventsListView.setAdapter(mEventsAdapter);
 
         setViewModel(new EventsVM(new EventService(), this));
@@ -110,7 +115,6 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
     @Override
     public void onEventsUpdated() {
         countText.setText(getViewModel().getCountText());
-        mEventsAdapter.setViewModels(getViewModel().getEventItems());
-        mEventsAdapter.notifyDataSetChanged();
+        eventItemVMs.onNext(getViewModel().getEventItems());
     }
 }

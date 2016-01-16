@@ -1,10 +1,11 @@
 package com.androidx.androidx.mvvm;
 
-import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.androidx.androidx.BuildConfig;
+import com.androidx.androidx.utils.TestView;
+import com.androidx.androidx.utils.TestViewModel;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,22 +31,6 @@ public class VMAdapterTest {
     private ViewProvider viewProvider;
     private TestView itemView;
     private ViewGroup parentViewGroup;
-
-    static class TestViewModel {
-
-    }
-
-    static class TestView extends View implements Bindable<TestViewModel> {
-
-        public TestView(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void bindViewModel(TestViewModel viewModel) {
-
-        }
-    }
 
     private void setupSut(int size) {
         itemVms = getTestViewModels(size);

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -11,11 +12,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidx.androidx.mvvm.BasicViewHolder;
+import com.androidx.androidx.databinding.ItemEventBinding;
 import com.androidx.androidx.mvvm.Binder;
+import com.androidx.androidx.mvvm.DataBindingViewHolder;
 import com.androidx.androidx.mvvm.VMRecyclerAdapter;
 import com.androidx.androidx.service.EventService;
-import com.androidx.androidx.view.EventView;
 import com.androidx.androidx.viewmodel.EventItemVM;
 import com.androidx.androidx.viewmodel.EventsVM;
 import com.androidx.androidx.viewmodel.OperationVM;
@@ -54,7 +55,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         ButterKnife.bind(this);
 
         eventsListView.setLayoutManager(new LinearLayoutManager(this));
-        mEventsAdapter = new VMRecyclerAdapter<>(eventItemVMs, () -> new BasicViewHolder<>(new EventView(this)));
+        mEventsAdapter = new VMRecyclerAdapter<>(eventItemVMs, () -> new DataBindingViewHolder<>(ItemEventBinding.inflate(LayoutInflater.from(this))));
         eventsListView.setAdapter(mEventsAdapter);
 
         setViewModel(new EventsVM(new EventService(), this));

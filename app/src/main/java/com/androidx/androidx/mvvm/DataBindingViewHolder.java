@@ -17,4 +17,5 @@ public class DataBindingViewHolder<VM> extends BindableViewHolder<VM> {
     public void bindViewModel(VM vm) {
         mBinding.setVariable(BR.vm, vm);
     }
+
 }

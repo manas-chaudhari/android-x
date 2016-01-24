@@ -5,9 +5,9 @@ import android.view.View;
 
 import com.androidx.androidx.mvvm.Bindable;
 
-public class TestView extends View implements Bindable<TestViewModel> {
+public class TestBindableView extends View implements Bindable<TestViewModel> {
 
-    public TestView(Context context) {
+    public TestBindableView(Context context) {
         super(context);
     }
 

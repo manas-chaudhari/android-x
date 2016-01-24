@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidx.androidx.mvvm.BasicViewHolder;
 import com.androidx.androidx.mvvm.Binder;
 import com.androidx.androidx.mvvm.VMRecyclerAdapter;
 import com.androidx.androidx.service.EventService;
@@ -43,7 +44,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
     @Bind(R.id.pb_events)
     public ProgressBar progressBar;
 
-    private VMRecyclerAdapter<EventView, EventItemVM> mEventsAdapter;
+    private VMRecyclerAdapter<EventItemVM> mEventsAdapter;
     private BehaviorSubject<List<EventItemVM>> eventItemVMs = BehaviorSubject.create(new ArrayList<>());
 
     @Override
@@ -53,7 +54,7 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         ButterKnife.bind(this);
 
         eventsListView.setLayoutManager(new LinearLayoutManager(this));
-        mEventsAdapter = new VMRecyclerAdapter<>(eventItemVMs, () -> new EventView(this));
+        mEventsAdapter = new VMRecyclerAdapter<>(eventItemVMs, () -> new BasicViewHolder<>(new EventView(this)));
         eventsListView.setAdapter(mEventsAdapter);
 
         setViewModel(new EventsVM(new EventService(), this));

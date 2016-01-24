@@ -1,9 +1,10 @@
 package com.androidx.androidx.mvvm;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.androidx.androidx.BuildConfig;
-import com.androidx.androidx.utils.TestView;
 import com.androidx.androidx.utils.TestViewModel;
 
 import org.junit.Before;
@@ -27,17 +28,23 @@ import static org.mockito.Mockito.when;
 @RunWith(RobolectricGradleTestRunner.class)
 @Config(constants = BuildConfig.class)
 public class VMRecyclerAdapterTest {
-    VMRecyclerAdapter<TestView, TestViewModel> sut;
+    VMRecyclerAdapter<TestViewModel> sut;
     BehaviorSubject<List<TestViewModel>> source;
-    ViewProvider<TestView> mockViewProvider;
-    TestView mockView;
+    ViewProvider<BindableViewHolder<TestViewModel>> mockViewProvider;
+    BindableViewHolder<TestViewModel> mockViewHolder;
+
+    public static class TestView extends View {
+        public TestView(Context context) {
+            super(context);
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
         source = BehaviorSubject.create(new ArrayList<>());
         mockViewProvider = mock(ViewProvider.class);
-        mockView = mock(TestView.class);
-        when(mockViewProvider.createView()).thenReturn(mockView);
+        mockViewHolder = mock(BindableViewHolder.class);
+        when(mockViewProvider.createView()).thenReturn(mockViewHolder);
         sut = new VMRecyclerAdapter<>(source, mockViewProvider);
     }
 
@@ -66,26 +73,24 @@ public class VMRecyclerAdapterTest {
 
         verify(mockViewProvider).createView();
         assertThat(holder).isNotNull();
-        assertThat(holder.itemView).isSameAs(mockView);
+        assertThat(holder).isSameAs(mockViewHolder);
     }
 
     @Test
     public void onBind_At0_ShouldInvokeBindWithFirstViewModel() {
-        VMRecyclerAdapter.BasicViewHolder<TestView, TestViewModel> holder = new VMRecyclerAdapter.BasicViewHolder<>(mockView);
         TestViewModel firstViewModel = new TestViewModel();
         source.onNext(Collections.singletonList(firstViewModel));
-        sut.onBindViewHolder(holder, 0);
+        sut.onBindViewHolder(mockViewHolder, 0);
 
-        verify(mockView).bindViewModel(firstViewModel);
+        verify(mockViewHolder).bindViewModel(firstViewModel);
     }
 
     @Test
     public void onBind_At1_ShouldInvokeBindWithSecondViewModel() {
-        VMRecyclerAdapter.BasicViewHolder<TestView, TestViewModel> holder = new VMRecyclerAdapter.BasicViewHolder<>(mockView);
         TestViewModel secondViewModel = new TestViewModel();
         source.onNext(Arrays.asList(null, secondViewModel));
-        sut.onBindViewHolder(holder, 1);
+        sut.onBindViewHolder(mockViewHolder, 1);
 
-        verify(mockView).bindViewModel(secondViewModel);
+        verify(mockViewHolder).bindViewModel(secondViewModel);
     }
 }

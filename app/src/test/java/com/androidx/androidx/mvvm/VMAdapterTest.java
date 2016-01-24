@@ -4,7 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.androidx.androidx.BuildConfig;
-import com.androidx.androidx.utils.TestView;
+import com.androidx.androidx.utils.TestBindableView;
 import com.androidx.androidx.utils.TestViewModel;
 
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class VMAdapterTest {
     private List<TestViewModel> itemVms;
     private VMAdapter sut;
     private ViewProvider viewProvider;
-    private TestView itemView;
+    private TestBindableView itemView;
     private ViewGroup parentViewGroup;
 
     private void setupSut(int size) {
@@ -38,7 +38,7 @@ public class VMAdapterTest {
 
         sut = new VMAdapter(RuntimeEnvironment.application, itemVms, viewProvider);
 
-        itemView = mock(TestView.class);
+        itemView = mock(TestBindableView.class);
         when(viewProvider.createView()).thenReturn(itemView);
         parentViewGroup = mock(ViewGroup.class);
     }
@@ -97,7 +97,7 @@ public class VMAdapterTest {
     @Test
     public void getView_WithConvertView_ShouldReuseView() {
         setupSut(4);
-        TestView convertView = mock(TestView.class);
+        TestBindableView convertView = mock(TestBindableView.class);
 
         View returnedView = sut.getView(1, convertView, parentViewGroup);
 
@@ -107,7 +107,7 @@ public class VMAdapterTest {
     @Test
     public void getView_WithConvertView_ShouldNotCreateView() {
         setupSut(4);
-        TestView convertView = mock(TestView.class);
+        TestBindableView convertView = mock(TestBindableView.class);
 
         sut.getView(1, convertView, parentViewGroup);
 
@@ -117,7 +117,7 @@ public class VMAdapterTest {
     @Test
     public void getView_At1_WithConvertView_ShouldBindViewModel_At1() {
         setupSut(4);
-        TestView convertView = mock(TestView.class);
+        TestBindableView convertView = mock(TestBindableView.class);
 
         sut.getView(1, convertView, parentViewGroup);
 
@@ -127,7 +127,7 @@ public class VMAdapterTest {
     @Test
     public void getView_At2_WithConvertView_ShouldBindViewModel_At2() {
         setupSut(4);
-        TestView convertView = mock(TestView.class);
+        TestBindableView convertView = mock(TestBindableView.class);
 
         sut.getView(2, convertView, parentViewGroup);
 

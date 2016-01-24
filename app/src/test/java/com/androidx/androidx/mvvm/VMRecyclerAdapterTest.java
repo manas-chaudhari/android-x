@@ -71,7 +71,7 @@ public class VMRecyclerAdapterTest {
 
     @Test
     public void onBind_At0_ShouldInvokeBindWithFirstViewModel() {
-        VMRecyclerAdapter.BasicViewHolder<TestView> holder = new VMRecyclerAdapter.BasicViewHolder<>(mockView);
+        VMRecyclerAdapter.BasicViewHolder<TestView, TestViewModel> holder = new VMRecyclerAdapter.BasicViewHolder<>(mockView);
         TestViewModel firstViewModel = new TestViewModel();
         source.onNext(Collections.singletonList(firstViewModel));
         sut.onBindViewHolder(holder, 0);
@@ -81,7 +81,7 @@ public class VMRecyclerAdapterTest {
 
     @Test
     public void onBind_At1_ShouldInvokeBindWithSecondViewModel() {
-        VMRecyclerAdapter.BasicViewHolder<TestView> holder = new VMRecyclerAdapter.BasicViewHolder<>(mockView);
+        VMRecyclerAdapter.BasicViewHolder<TestView, TestViewModel> holder = new VMRecyclerAdapter.BasicViewHolder<>(mockView);
         TestViewModel secondViewModel = new TestViewModel();
         source.onNext(Arrays.asList(null, secondViewModel));
         sut.onBindViewHolder(holder, 1);

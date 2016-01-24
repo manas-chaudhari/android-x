@@ -10,7 +10,7 @@ import java.util.List;
 import rx.Observable;
 import rx.Subscription;
 
-public class VMRecyclerAdapter<V extends View & Bindable<VM>, VM> extends RecyclerView.Adapter<VMRecyclerAdapter.BasicViewHolder<V>> {
+public class VMRecyclerAdapter<V extends View & Bindable<VM>, VM> extends RecyclerView.Adapter<BindableViewHolder<VM>> {
     private final ViewProvider<V> mViewProvider;
     private List<VM> mViewModels = new ArrayList<>();
     private final Subscription mSubscription;
@@ -24,14 +24,14 @@ public class VMRecyclerAdapter<V extends View & Bindable<VM>, VM> extends Recycl
     }
 
     @Override
-    public BasicViewHolder<V> onCreateViewHolder(ViewGroup parent, int viewType) {
+    public BindableViewHolder<VM> onCreateViewHolder(ViewGroup parent, int viewType) {
         return new BasicViewHolder<>(mViewProvider.createView());
     }
 
     @Override
-    public void onBindViewHolder(BasicViewHolder<V> holder, int position) {
+    public void onBindViewHolder(BindableViewHolder<VM> holder, int position) {
         VM vm = mViewModels.get(position);
-        holder.itemView.bindViewModel(vm);
+        holder.bindViewModel(vm);
     }
 
     @Override
@@ -43,12 +43,21 @@ public class VMRecyclerAdapter<V extends View & Bindable<VM>, VM> extends Recycl
         mSubscription.unsubscribe();
     }
 
-    public static class BasicViewHolder<V extends View> extends RecyclerView.ViewHolder {
-        public final V itemView;
+    public static class BasicViewHolder<V extends View & Bindable<VM>, VM> extends BindableViewHolder<VM> {
+        private` final V itemView;
 
         public BasicViewHolder(V view) {
             super(view);
             itemView = view;
+        }
+
+        public View getView() {
+            return itemView;
+        }
+
+        @Override
+        public void bindViewModel(VM vm) {
+            itemView.bindViewModel(vm);
         }
     }
 

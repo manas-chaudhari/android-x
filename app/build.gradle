@@ -1,5 +1,5 @@
 plugins {
-    id "me.tatarka.retrolambda" version "3.2.1"
+    id "me.tatarka.retrolambda" version "3.2.5"
 }
 
 apply plugin: 'com.android.application'
@@ -66,8 +66,8 @@ def coverageSourceDirs = [
 
 task jacocoTestReport(type: JacocoReport, dependsOn: "testDebug") {
     reports {
-        xml.enabled true
-        csv.enabled false
+        xml.enabled = true
+        csv.enabled = false
         html.enabled = true
         html.destination "${reportsDir}/jacocoHtml"
     }

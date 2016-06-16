@@ -1,6 +1,7 @@
 package com.androidx.androidx;
 
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -99,8 +100,8 @@ public class EventsActivity extends ActionBarActivity implements EventsVM.OnEven
         return mViewModel;
     }
 
-    // TODO: Make this private
-    public void setViewModel(EventsVM viewModel) {
+    @VisibleForTesting
+    protected void setViewModel(EventsVM viewModel) {
         this.mViewModel = viewModel;
         this.mViewModel.setListener(this);
         this.onEventsUpdated();

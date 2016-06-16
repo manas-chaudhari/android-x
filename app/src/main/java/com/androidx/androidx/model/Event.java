@@ -16,7 +16,7 @@ public class Event {
         private String login;
     }
 
-    private class Repository {
-        private String name;
+    public static class Repository {
+        public String name;
     }
 }
